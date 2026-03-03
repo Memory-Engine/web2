@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory Engine</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:#0a0a0a;
+  --surface:#111;
+  --border:#1e1e1e;
+  --accent:#a855f7;
+  --accent2:#c084fc;
+  --text:#f0f0f0;
+  --muted:#666;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Syne',sans-serif;
+  overflow-x:hidden;
+}
+
+/* HERO */
+
+.hero{
+  padding:120px 60px 100px;
+}
+
+.hero h1{
+  font-size:clamp(40px,6vw,80px);
+  font-weight:800;
+  line-height:1;
+}
+
+.hero span{
+  color:var(--accent2);
+}
+
+/* MARQUEE */
+
+.marquee{
+  width:100%;
+  overflow:hidden;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:20px 0;
+  margin-top:60px;
+}
+
+.marquee-inner{
+  display:flex;
+  flex-wrap:nowrap;
+  width:max-content;
+  animation:scroll 30s linear infinite;
+}
+
+.marquee-item{
+  flex:0 0 auto;
+  margin-right:60px;
+  font-family:'DM Mono',monospace;
+  font-size:14px;
+  color:#777;
+  white-space:nowrap;
+}
+
+@keyframes scroll{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+/* CASES */
+
+.featured-cases{
+  padding:120px 60px;
+}
+
+.section-label{
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--accent);
+}
+
+.section-title{
+  font-size:42px;
+  margin-top:20px;
+}
+
+.cases-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;
+  margin-top:60px;
+}
+
+.case-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:40px;
+  text-decoration:none;
+  color:var(--text);
+  transition:.3s;
+}
+
+.case-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-6px);
+}
+
+.case-num{
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:20px;
+}
+
+.case-name{
+  font-size:26px;
+  font-weight:700;
+  margin-bottom:12px;
+}
+
+.case-metric{
+  font-size:18px;
+  color:var(--accent);
+  font-weight:600;
+}
+
+.cases-cta{
+  margin-top:50px;
+  text-align:center;
+}
+
+.see-all{
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:#888;
+  text-decoration:none;
+  border-bottom:1px solid #333;
+  padding-bottom:6px;
+}
+
+.see-all:hover{
+  color:var(--accent2);
+  border-color:var(--accent2);
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+  .hero{padding:80px 24px}
+  .featured-cases{padding:80px 24px}
+  .cases-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <h1>Memory<br><span>Engine</span></h1>
+</section>
+
+<!-- MARQUEE -->
+
+<section class="marquee">
+  <div class="marquee-inner">
+    <div class="marquee-item">$FURM</div>
+    <div class="marquee-item">Concordium</div>
+    <div class="marquee-item">Tonzo</div>
+    <div class="marquee-item">Wowmax</div>
+    <div class="marquee-item">Bluff</div>
+
+    <!-- duplicate -->
+    <div class="marquee-item">$FURM</div>
+    <div class="marquee-item">Concordium</div>
+    <div class="marquee-item">Tonzo</div>
+    <div class="marquee-item">Wowmax</div>
+    <div class="marquee-item">Bluff</div>
+  </div>
+</section>
+
+<!-- FEATURED CASES -->
+
+<section class="featured-cases">
+
+  <div class="section-label">// Selected Campaigns</div>
+  <h2 class="section-title">Proven Growth</h2>
+
+  <div class="cases-grid">
+
+    <a href="cases.html#c1" class="case-card">
+      <div class="case-num">01</div>
+      <div class="case-name">Switchboard</div>
+      <div class="case-metric">+20,000 users</div>
+    </a>
+
+    <a href="cases.html#c2" class="case-card">
+      <div class="case-num">02</div>
+      <div class="case-name">EVEDEX</div>
+      <div class="case-metric">22,000+ users</div>
+    </a>
+
+    <a href="cases.html#c3" class="case-card">
+      <div class="case-num">03</div>
+      <div class="case-name">$FURM</div>
+      <div class="case-metric">$20M → $30M</div>
+    </a>
+
+    <a href="cases.html#c5" class="case-card">
+      <div class="case-num">04</div>
+      <div class="case-name">Tonzo</div>
+      <div class="case-metric">0 → 50k MAU</div>
+    </a>
+
+  </div>
+
+  <div class="cases-cta">
+    <a href="cases.html" class="see-all">See All Cases →</a>
+  </div>
+
+</section>
+
+</body>
+</html>
