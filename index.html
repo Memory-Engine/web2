@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Memory Engine — Cases</title>
+<title>Memory Engine</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -27,240 +27,221 @@ body{
   overflow-x:hidden;
 }
 
-/* HEADER */
+/* HERO */
 
-header{
-  padding:80px 60px 60px;
-  border-bottom:1px solid var(--border);
+.hero{
+  padding:120px 60px 80px;
 }
 
-.back-btn{
-  font-family:'DM Mono',monospace;
-  font-size:11px;
-  letter-spacing:.15em;
-  text-transform:uppercase;
-  color:#5a5275;
-  text-decoration:none;
-  border:1px solid #1c1830;
-  padding:8px 18px;
-  display:inline-block;
-  margin-bottom:32px;
-  transition:.2s;
-}
-
-.back-btn:hover{
-  color:var(--accent2);
-  border-color:rgba(168,85,247,0.4);
-}
-
-header h1{
-  font-size:clamp(40px,6vw,80px);
+.hero h1{
+  font-size:clamp(50px,8vw,100px);
   font-weight:800;
   line-height:1;
 }
 
-header span{
+.hero span{
   color:var(--accent2);
 }
 
-/* CASES */
+/* MARQUEE */
 
-main{
-  max-width:1200px;
-  margin:0 auto;
-  padding:60px;
+.marquee{
+  width:100%;
+  overflow:hidden;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:20px 0;
+  margin-top:60px;
+}
+
+.marquee-inner{
+  display:flex;
+  width:max-content;
+  flex-wrap:nowrap;
+  animation:scroll 30s linear infinite;
+}
+
+.marquee-item{
+  margin-right:60px;
+  font-family:'DM Mono',monospace;
+  font-size:14px;
+  color:#777;
+  white-space:nowrap;
+}
+
+@keyframes scroll{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+/* FEATURED CASES */
+
+.featured{
+  padding:120px 60px 60px;
+}
+
+.cases-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:24px;
+  margin-top:60px;
+}
+
+.case-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:40px;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.case-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-6px);
+}
+
+.case-name{
+  font-size:26px;
+  font-weight:700;
+}
+
+.case-metric{
+  margin-top:10px;
+  color:var(--accent);
+  font-weight:600;
+}
+
+/* FULL CASES */
+
+.all-cases{
+  padding:100px 60px;
 }
 
 .case{
   background:var(--surface);
   border:1px solid var(--border);
   margin-bottom:20px;
-  overflow:hidden;
-  transition:border-color .3s;
-}
-
-.case:hover{
-  border-color:#333;
 }
 
 .case-header{
+  padding:30px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  padding:28px 36px;
   cursor:pointer;
-}
-
-.case-title{
-  font-size:22px;
-  font-weight:700;
-}
-
-.case-meta{
-  font-family:'DM Mono',monospace;
-  font-size:11px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.1em;
-}
-
-.toggle{
-  font-size:18px;
-  transition:.3s;
-}
-
-.case.open .toggle{
-  transform:rotate(45deg);
-  color:var(--accent);
 }
 
 .case-body{
   display:none;
-  padding:32px 36px;
+  padding:30px;
   border-top:1px solid var(--border);
   color:#bbb;
-  line-height:1.7;
 }
 
 .case.open .case-body{
   display:block;
 }
 
-.case-results{
-  margin-top:20px;
-  font-weight:600;
-  color:var(--accent);
-}
-
 /* MOBILE */
 
 @media(max-width:768px){
-  header{padding:40px 24px}
-  main{padding:24px}
+  .hero{padding:80px 24px}
+  .featured,.all-cases{padding:80px 24px}
+  .cases-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
-<header>
-  <a href="index.html" class="back-btn">← Back</a>
+<section class="hero">
   <h1>Memory<br><span>Engine</span></h1>
-</header>
+</section>
 
-<main>
+<section class="marquee">
+  <div class="marquee-inner">
+    <div class="marquee-item">$FURM</div>
+    <div class="marquee-item">Concordium</div>
+    <div class="marquee-item">Tonzo</div>
+    <div class="marquee-item">Wowmax</div>
+    <div class="marquee-item">Bluff</div>
+    <div class="marquee-item">$FURM</div>
+    <div class="marquee-item">Concordium</div>
+    <div class="marquee-item">Tonzo</div>
+    <div class="marquee-item">Wowmax</div>
+    <div class="marquee-item">Bluff</div>
+  </div>
+</section>
 
-<!-- CASE 1 -->
-<div class="case" id="c1">
-  <div class="case-header" onclick="toggleCase(this)">
-    <div>
-      <div class="case-title">Switchboard</div>
-      <div class="case-meta">Oracle Infrastructure</div>
-    </div>
-    <div class="toggle">+</div>
-  </div>
-  <div class="case-body">
-    Alpha-driven infrastructure expansion across 70+ high-intent communities.  
-    Coordinated KOL + DAO distribution with synchronized posting windows.
-    <div class="case-results">
-      +20,000 users · 3x ROI · $15k+ capital staked
-    </div>
-  </div>
-</div>
+<section class="featured">
+  <h2>Selected Campaigns</h2>
 
-<!-- CASE 2 -->
-<div class="case" id="c2">
-  <div class="case-header" onclick="toggleCase(this)">
-    <div>
-      <div class="case-title">EVEDEX</div>
-      <div class="case-meta">DEX Growth</div>
+  <div class="cases-grid">
+    <div class="case-card" onclick="scrollToCases()">
+      <div class="case-name">Switchboard</div>
+      <div class="case-metric">+20,000 users</div>
     </div>
-    <div class="toggle">+</div>
+
+    <div class="case-card" onclick="scrollToCases()">
+      <div class="case-name">EVEDEX</div>
+      <div class="case-metric">22,000+ users</div>
+    </div>
+
+    <div class="case-card" onclick="scrollToCases()">
+      <div class="case-name">$FURM</div>
+      <div class="case-metric">$20M → $30M</div>
+    </div>
+
+    <div class="case-card" onclick="scrollToCases()">
+      <div class="case-name">Tonzo</div>
+      <div class="case-metric">0 → 50k MAU</div>
+    </div>
   </div>
-  <div class="case-body">
-    Community-driven growth engine with alpha activations, collabs and viral mechanics advisory.
-    <div class="case-results">
+</section>
+
+<section class="all-cases" id="cases">
+  <h2>All Cases</h2>
+
+  <div class="case">
+    <div class="case-header" onclick="toggleCase(this)">Switchboard +</div>
+    <div class="case-body">
+      Alpha-driven infrastructure expansion across 70+ communities.  
+      +20,000 users · 3x ROI
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="case-header" onclick="toggleCase(this)">EVEDEX +</div>
+    <div class="case-body">
+      Community-driven growth engine.  
       22,000+ users · 40k+ engagements
     </div>
   </div>
-</div>
 
-<!-- CASE 3 -->
-<div class="case" id="c3">
-  <div class="case-header" onclick="toggleCase(this)">
-    <div>
-      <div class="case-title">$FURM</div>
-      <div class="case-meta">Momentum Recovery</div>
-    </div>
-    <div class="toggle">+</div>
-  </div>
-  <div class="case-body">
-    Rebuilt alpha mix, narrative clustering and timing coordination to restore market momentum.
-    <div class="case-results">
-      $20M → $30M market cap · 250k+ impressions
+  <div class="case">
+    <div class="case-header" onclick="toggleCase(this)">$FURM +</div>
+    <div class="case-body">
+      Narrative restructuring + alpha coordination.  
+      $20M → $30M market cap
     </div>
   </div>
-</div>
 
-<!-- CASE 4 -->
-<div class="case" id="c4">
-  <div class="case-header" onclick="toggleCase(this)">
-    <div>
-      <div class="case-title">Concordium</div>
-      <div class="case-meta">Layer 1</div>
-    </div>
-    <div class="toggle">+</div>
-  </div>
-  <div class="case-body">
-    Structured narrative and high-signal KOL coordination for informed audiences.
-    <div class="case-results">
-      +30% price impact · 150k+ impressions
+  <div class="case">
+    <div class="case-header" onclick="toggleCase(this)">Tonzo +</div>
+    <div class="case-body">
+      Full funnel audit + KOL traffic orchestration.  
+      50k MAU · $40k saved
     </div>
   </div>
-</div>
-
-<!-- CASE 5 -->
-<div class="case" id="c5">
-  <div class="case-header" onclick="toggleCase(this)">
-    <div>
-      <div class="case-title">Tonzo</div>
-      <div class="case-meta">Telegram Launch</div>
-    </div>
-    <div class="toggle">+</div>
-  </div>
-  <div class="case-body">
-    Full-funnel audit + KOL and streamer traffic orchestration for Mini App launch.
-    <div class="case-results">
-      0 → 50k MAU · $40k budget saved
-    </div>
-  </div>
-</div>
-
-</main>
+</section>
 
 <script>
 function toggleCase(header){
-  const caseEl = header.parentElement;
-  const isOpen = caseEl.classList.contains("open");
-
-  document.querySelectorAll(".case").forEach(c => c.classList.remove("open"));
-
-  if(!isOpen){
-    caseEl.classList.add("open");
-  }
+  const parent = header.parentElement;
+  parent.classList.toggle("open");
 }
 
-/* Auto-open if URL contains #cX */
-window.addEventListener("load", function(){
-  if(window.location.hash){
-    const target = document.querySelector(window.location.hash);
-    if(target){
-      target.classList.add("open");
-      setTimeout(()=>{
-        target.scrollIntoView({behavior:"smooth", block:"start"});
-      },200);
-    }
-  }
-});
+function scrollToCases(){
+  document.getElementById("cases").scrollIntoView({behavior:"smooth"});
+}
 </script>
 
 </body>
