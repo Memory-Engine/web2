@@ -4,245 +4,745 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Memory Engine</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0a0a0a;
-  --surface:#111;
-  --border:#1e1e1e;
-  --accent:#a855f7;
-  --accent2:#c084fc;
-  --text:#f0f0f0;
-  --muted:#666;
+:root {
+  --bg: #06050f;
+  --surface: #0d0b1a;
+  --surface2: #110f20;
+  --border: #1c1830;
+  --accent: #a855f7;
+  --accent-bright: #c084fc;
+  --accent-btn: #7c3aed;
+  --text: #f1eeff;
+  --muted: #5a5275;
+  --muted2: #8b7fb5;
 }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; }
 
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Syne',sans-serif;
-  overflow-x:hidden;
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 60px; z-index: 100;
+  background: linear-gradient(to bottom, rgba(6,5,15,0.97), transparent);
+  backdrop-filter: blur(12px);
 }
+.nav-logo { font-family: 'DM Mono', monospace; font-size: 13px; letter-spacing: .15em; color: var(--text); text-transform: uppercase; text-decoration: none; }
+.nav-logo span { color: var(--accent-bright); }
+.nav-right { display: flex; gap: 16px; align-items: center; }
+.nav-btn { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; padding: 10px 22px; border: 1px solid var(--border); color: var(--muted); transition: all .2s; }
+.nav-btn:hover { color: var(--text); border-color: rgba(168,85,247,0.4); }
+.nav-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.nav-btn.primary:hover { background: var(--accent-btn); border-color: var(--accent-btn); }
 
 /* HERO */
-
-.hero{
-  padding:120px 60px 80px;
+.hero {
+  height: 100vh; min-height: 600px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 60px 80px;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--border);
 }
-
-.hero h1{
-  font-size:clamp(50px,8vw,100px);
-  font-weight:800;
-  line-height:1;
+.hero-glow { position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 40%, rgba(168,85,247,0.09) 0%, transparent 60%); pointer-events: none; }
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(168,85,247,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(168,85,247,0.04) 1px, transparent 1px);
+  background-size: 80px 80px; pointer-events: none;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
 }
-
-.hero span{
-  color:var(--accent2);
-}
+.hero-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .25em; color: var(--accent); text-transform: uppercase; margin-bottom: 24px; opacity: 0; animation: fadeUp .7s .3s forwards; }
+.hero h1 { font-size: clamp(52px,9vw,120px); font-weight: 800; line-height: .9; letter-spacing: -.04em; max-width: 900px; opacity: 0; animation: fadeUp .7s .5s forwards; }
+.hero h1 em { font-style: normal; color: var(--accent-bright); }
+.hero-bottom { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 60px; flex-wrap: wrap; gap: 32px; opacity: 0; animation: fadeUp .7s .7s forwards; }
+.hero-desc { font-size: 15px; color: var(--muted2); max-width: 420px; line-height: 1.75; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; padding: 15px 32px; text-decoration: none; display: inline-block; transition: all .2s; letter-spacing: .02em; }
+.btn-fill { background: var(--accent); color: #fff; }
+.btn-fill:hover { background: var(--accent-btn); transform: translateY(-2px); }
+.btn-ghost { border: 1px solid var(--border); color: var(--text); }
+.btn-ghost:hover { border-color: var(--accent); transform: translateY(-2px); }
 
 /* MARQUEE */
+.marquee-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); overflow: hidden; padding: 20px 0; }
+.marquee-inner { display: flex; flex-wrap: nowrap; width: max-content; animation: marquee 24s linear infinite; }
+.marquee-inner:hover { animation-play-state: paused; }
+.marquee-item { flex-shrink: 0; display: inline-flex; align-items: center; gap: 12px; font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); padding: 0 40px; border-right: 1px solid var(--border); transition: color .2s; cursor: default; white-space: nowrap; }
+.marquee-item:hover { color: var(--accent-bright); }
+.marquee-dot { width: 5px; height: 5px; min-width: 5px; background: var(--accent); border-radius: 50%; }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-.marquee{
-  width:100%;
-  overflow:hidden;
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  padding:20px 0;
-  margin-top:60px;
+/* SECTION */
+.section { padding: 120px 60px; border-bottom: 1px solid var(--border); }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.s-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.s-title { font-size: clamp(32px,4.5vw,58px); font-weight: 800; letter-spacing: -.025em; line-height: 1; margin-bottom: 60px; }
+.s-title em { font-style: normal; color: var(--accent-bright); }
+
+/* SERVICES */
+.services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+.svc { background: var(--surface); border: 1px solid var(--border); padding: 44px 36px; position: relative; overflow: hidden; transition: border-color .3s; }
+.svc::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 0% 100%, rgba(168,85,247,0.08) 0%, transparent 60%); opacity: 0; transition: opacity .4s; }
+.svc:hover { border-color: rgba(168,85,247,0.35); }
+.svc:hover::after { opacity: 1; }
+.svc-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: .1em; margin-bottom: 32px; }
+.svc-icon { display: none; }
+.svc-title { font-size: 24px; font-weight: 700; margin-bottom: 14px; letter-spacing: -.02em; line-height: 1.15; }
+.svc-desc { font-size: 14px; color: var(--muted2); line-height: 1.75; }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
+.stat { background: var(--surface); border: 1px solid var(--border); padding: 52px 36px; position: relative; overflow: hidden; }
+.stat::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0; transition: opacity .3s; }
+.stat:hover::before { opacity: 1; }
+.stat-val { font-size: clamp(36px,4vw,60px); font-weight: 800; letter-spacing: -.02em; color: var(--accent-bright); line-height: 1; margin-bottom: 12px; }
+.stat-val.dim { color: var(--accent); }
+.stat-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); line-height: 1.5; }
+
+/* ══════════════════════════════
+   CASES ACCORDION
+══════════════════════════════ */
+.cases-list { display: flex; flex-direction: column; gap: 2px; margin-top: 60px; }
+
+.case-item { background: var(--surface); border: 1px solid var(--border); overflow: hidden; transition: border-color .3s; }
+.case-item.open { border-color: rgba(168,85,247,0.35); }
+
+/* Header row */
+.case-head {
+  display: grid; grid-template-columns: 52px 1fr auto auto;
+  align-items: center; gap: 20px; padding: 28px 36px;
+  cursor: pointer; user-select: none; transition: background .2s;
 }
+.case-head:hover { background: rgba(168,85,247,0.04); }
+.case-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); letter-spacing: .1em; }
+.case-head-info { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.case-head-name { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.case-head-tag { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); padding: 4px 12px; background: var(--bg); }
+.case-head-stage { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
+.case-toggle { width: 28px; height: 28px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--muted); transition: transform .3s, background .2s, color .2s; flex-shrink: 0; }
+.case-item.open .case-toggle { transform: rotate(45deg); background: var(--accent); color: #fff; border-color: var(--accent); }
 
-.marquee-inner{
-  display:flex;
-  width:max-content;
-  flex-wrap:nowrap;
-  animation:scroll 30s linear infinite;
-}
+/* Body */
+.case-body { display: none; border-top: 1px solid var(--border); }
+.case-item.open .case-body { display: block; }
 
-.marquee-item{
-  margin-right:60px;
-  font-family:'DM Mono',monospace;
-  font-size:14px;
-  color:#777;
-  white-space:nowrap;
-}
+.case-sections { display: grid; grid-template-columns: 1fr 1fr; }
+.cs { padding: 36px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.cs:nth-child(even) { border-right: none; }
+.cs.full { grid-column: 1 / -1; border-right: none; }
+.cs-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.cs-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.cs p { font-size: 14px; color: #bbb; line-height: 1.75; }
+.cs p + p { margin-top: 10px; }
+.cs p.lead { font-size: 15px; font-weight: 600; color: var(--text); }
+.cs ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.cs ul li { font-size: 14px; color: #bbb; line-height: 1.6; padding-left: 20px; position: relative; }
+.cs ul li::before { content: '→'; color: var(--accent); position: absolute; left: 0; font-family: 'DM Mono', monospace; font-size: 12px; }
+strong.hl { color: var(--text); font-weight: 700; }
 
-@keyframes scroll{
-  from{transform:translateX(0)}
-  to{transform:translateX(-50%)}
-}
+.results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 10px; }
+.res { background: var(--bg); border: 1px solid var(--border); padding: 18px; }
+.res-val { font-size: 20px; font-weight: 700; color: var(--accent-bright); line-height: 1.1; margin-bottom: 5px; }
+.res-val.blue { color: #38bdf8; }
+.res-desc { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; line-height: 1.4; }
 
-/* FEATURED CASES */
+.links-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.link-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted2); text-decoration: none; border: 1px solid var(--border); padding: 6px 14px; transition: color .2s, border-color .2s; }
+.link-btn:hover { color: var(--text); border-color: rgba(168,85,247,0.4); }
+.link-btn.figma { color: var(--accent-bright); border-color: rgba(168,85,247,0.3); }
+.link-btn.figma:hover { background: rgba(168,85,247,0.08); }
 
-.featured{
-  padding:120px 60px 60px;
-}
+/* CTA */
+.cta-section { padding: 160px 60px; text-align: center; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+.cta-section::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 900px; height: 900px; background: radial-gradient(circle, rgba(168,85,247,0.07) 0%, transparent 60%); pointer-events: none; }
+.cta-section h2 { font-size: clamp(44px,7vw,88px); font-weight: 800; letter-spacing: -.03em; line-height: .92; margin-bottom: 32px; }
+.cta-section h2 span { color: var(--accent-bright); }
+.cta-section p { font-size: 16px; color: var(--muted2); max-width: 440px; margin: 0 auto 52px; line-height: 1.75; }
+.cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
-.cases-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:24px;
-  margin-top:60px;
-}
+/* FOOTER */
+footer { padding: 40px 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.footer-logo { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: .15em; text-transform: uppercase; color: #2a2440; }
+.footer-logo span { color: var(--accent); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s; }
+.footer-links a:hover { color: var(--text); }
+.footer-copy { font-family: 'DM Mono', monospace; font-size: 10px; color: #2a2440; }
 
-.case-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:40px;
-  cursor:pointer;
-  transition:.3s;
-}
+@keyframes fadeUp { from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)} }
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s, transform .8s; }
+.reveal.on { opacity: 1; transform: translateY(0); }
 
-.case-card:hover{
-  border-color:var(--accent);
-  transform:translateY(-6px);
-}
-
-.case-name{
-  font-size:26px;
-  font-weight:700;
-}
-
-.case-metric{
-  margin-top:10px;
-  color:var(--accent);
-  font-weight:600;
-}
-
-/* FULL CASES */
-
-.all-cases{
-  padding:100px 60px;
-}
-
-.case{
-  background:var(--surface);
-  border:1px solid var(--border);
-  margin-bottom:20px;
-}
-
-.case-header{
-  padding:30px;
-  display:flex;
-  justify-content:space-between;
-  cursor:pointer;
-}
-
-.case-body{
-  display:none;
-  padding:30px;
-  border-top:1px solid var(--border);
-  color:#bbb;
-}
-
-.case.open .case-body{
-  display:block;
-}
-
-/* MOBILE */
-
-@media(max-width:768px){
-  .hero{padding:80px 24px}
-  .featured,.all-cases{padding:80px 24px}
-  .cases-grid{grid-template-columns:1fr}
+@media(max-width:900px){
+  nav{padding:20px 24px} .nav-right .nav-btn:not(.primary){display:none}
+  .hero{padding:0 24px 60px} .hero h1{font-size:clamp(44px,12vw,72px)} .hero-bottom{flex-direction:column;align-items:flex-start}
+  .section{padding:80px 24px}
+  .services-grid,.cases-sections{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .case-sections{grid-template-columns:1fr}
+  .cs{border-right:none} .cs.full{grid-column:1}
+  .case-head{grid-template-columns:40px 1fr auto;padding:20px} .case-head-stage{display:none}
+  .cta-section{padding:100px 24px}
+  footer{padding:32px 24px;flex-direction:column;align-items:flex-start}
 }
 </style>
 </head>
 <body>
 
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Memory<span>Engine</span></a>
+  <div class="nav-right">
+    <a href="#services" class="nav-btn">Services</a>
+    <a href="#cases" class="nav-btn">Cases</a>
+    <a href="#contact" class="nav-btn primary">Book a Call</a>
+  </div>
+</nav>
+
+<!-- HERO -->
 <section class="hero">
-  <h1>Memory<br><span>Engine</span></h1>
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-eyebrow">Web3 Traction Lab</div>
+  <h1>Growth That<br>Moves <em>Markets</em></h1>
+  <div class="hero-bottom">
+    <p class="hero-desc">From alpha networks to KOL campaigns — we build structured distribution systems that convert traffic into real community, real staking, and real on-chain momentum.</p>
+    <div class="hero-actions">
+      <a href="#cases" class="btn btn-fill">See Case Studies</a>
+      <a href="#contact" class="btn btn-ghost">Book a Call</a>
+    </div>
+  </div>
 </section>
 
-<section class="marquee">
+<!-- MARQUEE -->
+<div class="marquee-wrap">
   <div class="marquee-inner">
-    <div class="marquee-item">$FURM</div>
-    <div class="marquee-item">Concordium</div>
-    <div class="marquee-item">Tonzo</div>
-    <div class="marquee-item">Wowmax</div>
-    <div class="marquee-item">Bluff</div>
-    <div class="marquee-item">$FURM</div>
-    <div class="marquee-item">Concordium</div>
-    <div class="marquee-item">Tonzo</div>
-    <div class="marquee-item">Wowmax</div>
-    <div class="marquee-item">Bluff</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Switchboard</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>EveDex</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>$FURM</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Concordium</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Tonzo</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Wowmax</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Bluff</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Switchboard</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>EveDex</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>$FURM</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Concordium</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Tonzo</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Wowmax</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Bluff</div>
+  </div>
+</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>$FURM</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Concordium</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Tonzo</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Wowmax</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Bluff</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="section reveal" id="services">
+  <div class="section-inner">
+    <div class="s-eyebrow">What We Do</div>
+    <div class="s-title">Full-Stack <em>Growth</em> Infrastructure</div>
+    <div class="services-grid">
+      <div class="svc"><div class="svc-num">01</div><div class="svc-icon">⚡</div><div class="svc-title">Alpha Network Distribution</div><div class="svc-desc">70+ activated alpha servers, coordinated posting windows, and signal-driven narratives that generate organic discussions — not noise.</div></div>
+      <div class="svc"><div class="svc-num">02</div><div class="svc-icon">🎯</div><div class="svc-title">KOL & Streamer Campaigns</div><div class="svc-desc">Tier-1 and Tier-2 KOL curation, streamer activations, and synchronized content drops that cluster attention and build credibility.</div></div>
+      <div class="svc"><div class="svc-num">03</div><div class="svc-icon">🔗</div><div class="svc-title">Community Collaborations</div><div class="svc-desc">300+ cross-community partnerships, Discord and Telegram collabs, and ambassador-driven engagement loops for sustained organic growth.</div></div>
+      <div class="svc"><div class="svc-num">04</div><div class="svc-icon">📊</div><div class="svc-title">Traffic Quality Optimization</div><div class="svc-desc">We audit and eliminate inefficient spend. Real-time monitoring to convert impressions into staking, on-chain activity, and buy pressure.</div></div>
+      <div class="svc"><div class="svc-num">05</div><div class="svc-icon">✍️</div><div class="svc-title">Narrative & Positioning</div><div class="svc-desc">Campaigns framed as insider insight — not promotion. Consistent signal structuring across all channels to prevent dilution.</div></div>
+      <div class="svc"><div class="svc-num">06</div><div class="svc-icon">🔍</div><div class="svc-title">Strategic Audit & Advisory</div><div class="svc-desc">Full-funnel audits from traffic to retention, launch plan reviews, and roadmap recommendations that identify structural bottlenecks early.</div></div>
+    </div>
   </div>
 </section>
 
-<section class="featured">
-  <h2>Selected Campaigns</h2>
-
-  <div class="cases-grid">
-    <div class="case-card" onclick="scrollToCases()">
-      <div class="case-name">Switchboard</div>
-      <div class="case-metric">+20,000 users</div>
-    </div>
-
-    <div class="case-card" onclick="scrollToCases()">
-      <div class="case-name">EVEDEX</div>
-      <div class="case-metric">22,000+ users</div>
-    </div>
-
-    <div class="case-card" onclick="scrollToCases()">
-      <div class="case-name">$FURM</div>
-      <div class="case-metric">$20M → $30M</div>
-    </div>
-
-    <div class="case-card" onclick="scrollToCases()">
-      <div class="case-name">Tonzo</div>
-      <div class="case-metric">0 → 50k MAU</div>
+<!-- STATS -->
+<section class="section reveal">
+  <div class="section-inner">
+    <div class="s-eyebrow">By the Numbers</div>
+    <div class="s-title">Results We've <em>Delivered</em></div>
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-val">1.7M+</div><div class="stat-label">Total Impressions<br>Across Campaigns</div></div>
+      <div class="stat"><div class="stat-val">100k+</div><div class="stat-label">New Audience<br>Members Acquired</div></div>
+      <div class="stat"><div class="stat-val dim">3x+</div><div class="stat-label">Average ROI<br>per Campaign</div></div>
+      <div class="stat"><div class="stat-val">$55k+</div><div class="stat-label">Capital Staked &<br>Budget Saved</div></div>
     </div>
   </div>
 </section>
 
-<section class="all-cases" id="cases">
-  <h2>All Cases</h2>
+<!-- CASES -->
+<section class="section reveal" id="cases">
+  <div class="section-inner">
+    <div class="s-eyebrow">Case Studies</div>
+    <div class="s-title">Campaigns That <em>Moved Markets</em></div>
 
-  <div class="case">
-    <div class="case-header" onclick="toggleCase(this)">Switchboard +</div>
-    <div class="case-body">
-      Alpha-driven infrastructure expansion across 70+ communities.  
-      +20,000 users · 3x ROI
-    </div>
-  </div>
+    <div class="cases-list">
 
-  <div class="case">
-    <div class="case-header" onclick="toggleCase(this)">EVEDEX +</div>
-    <div class="case-body">
-      Community-driven growth engine.  
-      22,000+ users · 40k+ engagements
-    </div>
-  </div>
+      <!-- 01 SWITCHBOARD -->
+      <div class="case-item" id="ci1">
+        <div class="case-head" onclick="toggleCase('ci1')">
+          <span class="case-num">01</span>
+          <div class="case-head-info">
+            <span class="case-head-name">Switchboard</span>
+            <span class="case-head-tag">Oracle Infrastructure</span>
+          </div>
+          <span class="case-head-stage">Growth & Ecosystem Expansion</span>
+          <div class="case-toggle">+</div>
+        </div>
+        <div class="case-body">
+          <div class="case-sections">
+            <div class="cs full">
+              <div class="cs-label">Client Overview</div>
+              <p class="lead">Switchboard is the everything oracle — a permissionless, multi-chain network delivering real-world data to dApps with unmatched speed, security, and customizability.</p>
+              <p>Trusted across 10+ blockchains, powering 50+ protocols like DeFi, RWAs, and prediction markets, with sub-100ms latency via Surge and on-demand oracles pulling from any source or aggregator.</p>
+              <div class="links-row">
+                <a href="https://x.com/switchboardxyz" class="link-btn" target="_blank">Twitter / X</a>
+                <a href="https://switchboard.xyz/" class="link-btn" target="_blank">Website</a>
+                <a href="https://www.figma.com/board/q8k0tQ9TVCmKbpvgoMwWf4/Switchboard?t=Zw4GuVAxRkgTLwsO-0" class="link-btn figma" target="_blank">↗ Figma Board</a>
+              </div>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Starting Point</div>
+              <ul>
+                <li>Early-stage oracle infrastructure project with engaged but small community</li>
+                <li>Need to expand cross-platform presence and drive <strong class="hl">real on-chain participation</strong></li>
+                <li>Objective: attract <strong class="hl">value-aligned, active users</strong> rather than generic reach</li>
+                <li>Create a traffic funnel and attract users to staking</li>
+              </ul>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Responsibility Areas</div>
+              <ul>
+                <li>Activation and management of the alpha network to attract high-intent audiences</li>
+                <li>Organization and coordination of community collaborations and strategic partnerships</li>
+                <li>Optimization of traffic quality and conversion into active participation and staking</li>
+                <li>Planning and synchronization of cross-platform postings (X, Discord, Telegram)</li>
+                <li>Campaign monitoring and strategic adjustments to maximize impact</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Execution</div>
+              <ul>
+                <li><strong class="hl">Alpha-driven distribution</strong> across infrastructure-focused communities</li>
+                <li><strong class="hl">70+ alpha servers</strong> activated to generate discussions and organic signals</li>
+                <li><strong class="hl">300+ community collaborations</strong> and reposts for cross-community amplification</li>
+                <li><strong class="hl">15 strategic ecosystem partnerships</strong> integrated into campaign</li>
+                <li>Coordinated multi-platform exposure with <strong class="hl">synchronized posting windows</strong></li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Overall Results</div>
+              <div class="results-grid">
+                <div class="res"><div class="res-val">20,000+</div><div class="res-desc">New Audience Members</div></div>
+                <div class="res"><div class="res-val">5,000+</div><div class="res-desc">New Discord Members</div></div>
+                <div class="res"><div class="res-val">300,000+</div><div class="res-desc">Impressions</div></div>
+                <div class="res"><div class="res-val blue">3x ROI</div><div class="res-desc">Return on Investment</div></div>
+                <div class="res"><div class="res-val">$15,000+</div><div class="res-desc">Net New Capital Staked</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-  <div class="case">
-    <div class="case-header" onclick="toggleCase(this)">$FURM +</div>
-    <div class="case-body">
-      Narrative restructuring + alpha coordination.  
-      $20M → $30M market cap
-    </div>
-  </div>
+      <!-- 02 EVEDEX -->
+      <div class="case-item" id="ci2">
+        <div class="case-head" onclick="toggleCase('ci2')">
+          <span class="case-num">02</span>
+          <div class="case-head-info">
+            <span class="case-head-name">EveDex</span>
+            <span class="case-head-tag">DEX / Community Growth</span>
+          </div>
+          <span class="case-head-stage">Growth & Engagement Expansion</span>
+          <div class="case-toggle">+</div>
+        </div>
+        <div class="case-body">
+          <div class="case-sections">
+            <div class="cs full">
+              <div class="cs-label">Client Overview</div>
+              <p class="lead">EveDex is a next-gen hybrid perpetual DEX combining CEX-level speed, offering futures, P2P, copy trading, and gamified features on its custom L3 blockchain powered by Arbitrum Orbit.</p>
+              <p>Backed by top investors including <strong class="hl">Foresight Ventures</strong> and <strong class="hl">Changer Club</strong>, led by chairman <strong class="hl">Thomas Kralow</strong> — a renowned trader with $30M+ personal trading profits.</p>
+              <div class="links-row">
+                <a href="https://x.com/EVEDEX" class="link-btn" target="_blank">Twitter / X</a>
+                <a href="https://evedex.com/" class="link-btn" target="_blank">Website</a>
+                <a href="https://www.figma.com/board/GQTlFOkfmnqTed5ylrjE7Z/Evedex?t=Zw4GuVAxRkgTLwsO-0" class="link-btn figma" target="_blank">↗ Figma Board</a>
+              </div>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Starting Point</div>
+              <ul>
+                <li>Emerging DEX with limited community engagement</li>
+                <li>Needed to scale audience and prepare <strong class="hl">viral-ready growth mechanics</strong></li>
+                <li>Objective: build <strong class="hl">high-quality, active community</strong>, not vanity metrics</li>
+              </ul>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Responsibility Areas</div>
+              <ul>
+                <li>Alpha and community-driven traffic execution</li>
+                <li>Advisory on viral push mechanics and ambassador program design</li>
+                <li>Guidance for sustainable traffic strategies and long-term growth</li>
+                <li>Content cadence planning and visibility optimization</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Execution</div>
+              <ul>
+                <li><strong class="hl">280+ community collaborations</strong> across Discord, Telegram, and X</li>
+                <li><strong class="hl">45 alpha calls</strong> to high-signal communities</li>
+                <li><strong class="hl">20 strategic partnerships</strong> activated for amplification</li>
+                <li><strong class="hl">110+ collabs and 35+ post raids</strong> to boost reach</li>
+                <li><strong class="hl">30+ campaign posts</strong> with coordinated posting strategy</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Overall Results</div>
+              <div class="results-grid">
+                <div class="res"><div class="res-val">22,000+</div><div class="res-desc">New Audience Members</div></div>
+                <div class="res"><div class="res-val">7,000+</div><div class="res-desc">New Discord Members</div></div>
+                <div class="res"><div class="res-val">40,000+</div><div class="res-desc">Total New Engagements</div></div>
+                <div class="res"><div class="res-val blue">9k</div><div class="res-desc">Actively Engaged Users</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-  <div class="case">
-    <div class="case-header" onclick="toggleCase(this)">Tonzo +</div>
-    <div class="case-body">
-      Full funnel audit + KOL traffic orchestration.  
-      50k MAU · $40k saved
-    </div>
+      <!-- 03 $FURM -->
+      <div class="case-item" id="ci3">
+        <div class="case-head" onclick="toggleCase('ci3')">
+          <span class="case-num">03</span>
+          <div class="case-head-info">
+            <span class="case-head-name">$FURM</span>
+            <span class="case-head-tag">Efficiency Play & MemeCoin</span>
+          </div>
+          <span class="case-head-stage">Mid-Cap / Momentum Recovery</span>
+          <div class="case-toggle">+</div>
+        </div>
+        <div class="case-body">
+          <div class="case-sections">
+            <div class="cs full">
+              <div class="cs-label">Client Overview</div>
+              <p class="lead">FURMULA is a high-octane memecoin on Solana blending furry-themed Formula 1 vibes with blockchain gaming, NFTs, and staking rewards.</p>
+              <p>Roared to life with a presale that raised 20,000 SOL in 45 seconds, powering a decentralized ecosystem of skill-based races, leaderboards, and community-driven chaos.</p>
+              <div class="links-row">
+                <a href="https://x.com/Furmulagames" class="link-btn" target="_blank">Twitter / X</a>
+                <a href="https://furmula.games/" class="link-btn" target="_blank">Website</a>
+                <a href="https://www.figma.com/board/XhQemzCHFEkHJiJlptE7tI/-FURM?node-id=0-1&t=Zw4GuVAxRkgTLwsO-1" class="link-btn figma" target="_blank">↗ Figma Board</a>
+              </div>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Starting Point</div>
+              <ul>
+                <li>Previous alpha campaigns underperformed due to overlapping sources and audience fatigue</li>
+                <li>More spend produced no incremental impact</li>
+                <li>Goal: turn inefficient alpha traffic into <strong class="hl">real market momentum</strong></li>
+              </ul>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Responsibility Areas</div>
+              <ul>
+                <li><strong class="hl">Alpha Caller Mix Design:</strong> legacy callers + new untapped communities</li>
+                <li><strong class="hl">Narrative Creation:</strong> frame as insider insight, not promotion</li>
+                <li><strong class="hl">Timing Coordination:</strong> cluster calls to maximize credibility</li>
+                <li><strong class="hl">Traffic Quality Optimization:</strong> focus on buy-pressure–driven users</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Execution</div>
+              <ul>
+                <li><strong class="hl">250+ Discord alpha calls</strong> across legacy and new alpha communities</li>
+                <li>Coordinated <strong class="hl">insight-driven narrative:</strong> "team preparing a major move"</li>
+                <li>Clustered timing to reinforce credibility and prevent signal dilution</li>
+                <li><strong class="hl">Internal X push</strong> to amplify momentum across channels</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Overall Results</div>
+              <div class="results-grid">
+                <div class="res"><div class="res-val blue">$20M → $30M</div><div class="res-desc">Market Cap (+50%)</div></div>
+                <div class="res"><div class="res-val">250,000+</div><div class="res-desc">Impressions</div></div>
+                <div class="res"><div class="res-val">$2M–$3M</div><div class="res-desc">Estimated Campaign Volume</div></div>
+                <div class="res"><div class="res-val">None</div><div class="res-desc">Immediate Dump — Strong Buy-Side</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 CONCORDIUM -->
+      <div class="case-item" id="ci4">
+        <div class="case-head" onclick="toggleCase('ci4')">
+          <span class="case-num">04</span>
+          <div class="case-head-info">
+            <span class="case-head-name">Concordium</span>
+            <span class="case-head-tag">L1 Blockchain</span>
+          </div>
+          <span class="case-head-stage">Post-Launch</span>
+          <div class="case-toggle">+</div>
+        </div>
+        <div class="case-body">
+          <div class="case-sections">
+            <div class="cs full">
+              <div class="cs-label">Client Overview</div>
+              <p class="lead">Concordium is a privacy-focused Layer-1 blockchain for regulated DeFi, with built-in zero-knowledge proofs, ID verification, and token controls like geofencing.</p>
+              <p>Supports 1990 TPS, sub-second finality, $0.01 fees. Bridges TradFi and crypto for real-world apps like trade finance and PayFi.</p>
+              <div class="links-row">
+                <a href="https://x.com/Concordium" class="link-btn" target="_blank">Twitter / X</a>
+                <a href="https://www.concordium.com/" class="link-btn" target="_blank">Website</a>
+                <a href="https://www.figma.com/board/I3tPA67EXzcNcinq3hWWLv/Concordium?t=Zw4GuVAxRkgTLwsO-1" class="link-btn figma" target="_blank">↗ Figma Board</a>
+              </div>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Alpha / DAO Community Activation</div>
+              <ul>
+                <li>Selection and activation of <strong class="hl">50+ high-intent alpha & DAO communities</strong></li>
+                <li>Focus on informed, experience-driven users rather than broad retail</li>
+                <li>Coordinated distribution to trigger discussion and follow-up actions</li>
+              </ul>
+            </div>
+            <div class="cs">
+              <div class="cs-label">KOL Strategy & Curation</div>
+              <ul>
+                <li>Outreach and coordination of <strong class="hl">25 Tier-1 / Tier-2 KOLs</strong> on Twitter/X</li>
+                <li>Prioritization of credibility and audience quality over raw follower count</li>
+                <li>Alignment of KOL narratives with campaign timing and market context</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Execution</div>
+              <ul>
+                <li><strong class="hl">50+ high-intent alpha / DAO communities</strong> across Discord and Telegram</li>
+                <li>Coordinated rollout with <strong class="hl">25 Tier-1 / Tier-2 KOLs</strong> on Twitter/X</li>
+                <li><strong class="hl">Synchronized posting windows</strong> to cluster attention and reinforce signal</li>
+                <li>Continuous traffic quality monitoring to prioritize buy-pressure–driven users</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Overall Results</div>
+              <div class="results-grid">
+                <div class="res"><div class="res-val blue">+30%</div><div class="res-desc">Price Impact</div></div>
+                <div class="res"><div class="res-val">150,000+</div><div class="res-desc">Impressions</div></div>
+                <div class="res"><div class="res-val">$15.7</div><div class="res-desc">CPM</div></div>
+                <div class="res"><div class="res-val">✓</div><div class="res-desc">Active Buyers & Long-Term Holders</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 05 TONZO -->
+      <div class="case-item" id="ci5">
+        <div class="case-head" onclick="toggleCase('ci5')">
+          <span class="case-num">05</span>
+          <div class="case-head-info">
+            <span class="case-head-name">Tonzo</span>
+            <span class="case-head-tag">On-Chain Lottery</span>
+          </div>
+          <span class="case-head-stage">Pre-Launch → Active Growth</span>
+          <div class="case-toggle">+</div>
+        </div>
+        <div class="case-body">
+          <div class="case-sections">
+            <div class="cs full">
+              <div class="cs-label">Client Overview</div>
+              <p class="lead">Tonzo is a fully on-chain lottery with massive jackpots, instant wins, and a tier-based club system, natively integrated into Telegram via a Mini App.</p>
+              <p>Weekly jackpots of <strong class="hl">20,000,000 USDT</strong>, daily jackpots of <strong class="hl">100,000 USDT</strong>. Backed by TON Blockchain.</p>
+              <div class="links-row">
+                <a href="https://t.me/tonzo_bot" class="link-btn" target="_blank">Tonzo Bot</a>
+                <a href="https://x.com/TonzoLottery" class="link-btn" target="_blank">Twitter / X</a>
+                <a href="https://www.figma.com/board/mjT13zEsKpVFa3j0c2NbxD/Tonzo?t=Zw4GuVAxRkgTLwsO-0" class="link-btn figma" target="_blank">↗ Figma Board</a>
+              </div>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Responsibility Areas — Traffic</div>
+              <ul>
+                <li>Traffic acquisition through KOLs campaign and streamers</li>
+                <li>Auditing and improving third-party traffic agencies</li>
+                <li>Supporting optimization of traffic quality</li>
+              </ul>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Responsibility Areas — Audit</div>
+              <ul>
+                <li>Full-funnel audit: traffic → activation → retention → referral</li>
+                <li>Launch plan and content plan audit</li>
+                <li>Product and marketing roadmap review</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Execution</div>
+              <ul>
+                <li><strong class="hl">48 KOLs & streamers activated</strong> across relevant crypto audiences</li>
+                <li><strong class="hl">30 live streams</strong> executed on multiple platforms</li>
+                <li><strong class="hl">108 coordinated promotional posts</strong> with controlled timing</li>
+                <li><strong class="hl">Full-funnel and launch strategy audit</strong> from traffic to retention</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Overall Results</div>
+              <div class="results-grid">
+                <div class="res"><div class="res-val blue">0 → 50k+</div><div class="res-desc">Monthly Active Users</div></div>
+                <div class="res"><div class="res-val">0 → 16,000</div><div class="res-desc">Community Members</div></div>
+                <div class="res"><div class="res-val">$40,000+</div><div class="res-desc">Budget Saved After Audit</div></div>
+                <div class="res"><div class="res-val">756,000+</div><div class="res-desc">Total Impressions</div></div>
+                <div class="res"><div class="res-val">$32.68</div><div class="res-desc">CPM</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 WOWMAX -->
+      <div class="case-item" id="ci6">
+        <div class="case-head" onclick="toggleCase('ci6')">
+          <span class="case-num">06</span>
+          <div class="case-head-info">
+            <span class="case-head-name">Wowmax</span>
+            <span class="case-head-tag">DEX Aggregator</span>
+          </div>
+          <span class="case-head-stage">Growth & Adoption</span>
+          <div class="case-toggle">+</div>
+        </div>
+        <div class="case-body">
+          <div class="case-sections">
+            <div class="cs full">
+              <div class="cs-label">Client Overview</div>
+              <p class="lead">WOWMAX is a next-gen DEX aggregator optimizing token swaps across chains via liquidity aggregation, back-run arbitrage, and slippage-based profits returned to traders.</p>
+              <p>Cross-chain trades on 20+ networks, plus on-chain copy-trading scanning 100M+ wallets to auto-replicate top strategies in real-time.</p>
+              <div class="links-row">
+                <a href="https://x.com/WowmaxExchange" class="link-btn" target="_blank">Twitter / X</a>
+                <a href="https://wowmax.exchange/" class="link-btn" target="_blank">Website</a>
+                <a href="https://www.figma.com/board/LDHqaxS0OrW6soFQ6ZY5qD/Wowmax?t=Zw4GuVAxRkgTLwsO-0" class="link-btn figma" target="_blank">↗ Figma Board</a>
+              </div>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Responsibility Areas</div>
+              <ul>
+                <li>Community collaboration sourcing and coordination</li>
+                <li>Traffic orchestration without paid spend</li>
+                <li>Messaging and content angle optimization</li>
+                <li>Posting cadence and visibility management</li>
+              </ul>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Execution</div>
+              <ul>
+                <li><strong class="hl">Organic</strong>, community-led distribution strategy</li>
+                <li><strong class="hl">200+ community collaborations</strong> (Discord / Telegram / X)</li>
+                <li>Narrative-driven content focused on product utility</li>
+                <li>Repeated exposure across <strong class="hl">DEX, DeFi</strong> and <strong class="hl">trader-focused</strong> groups</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Overall Results</div>
+              <div class="results-grid">
+                <div class="res"><div class="res-val">14,000+</div><div class="res-desc">New Audience Members</div></div>
+                <div class="res"><div class="res-val">4,000+</div><div class="res-desc">New Discord Members</div></div>
+                <div class="res"><div class="res-val">250,000+</div><div class="res-desc">Impressions</div></div>
+                <div class="res"><div class="res-val">50,000+</div><div class="res-desc">Monthly Social Reach</div></div>
+                <div class="res"><div class="res-val blue">$0</div><div class="res-desc">Traffic Budget Used</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 07 BLUFF -->
+      <div class="case-item" id="ci7">
+        <div class="case-head" onclick="toggleCase('ci7')">
+          <span class="case-num">07</span>
+          <div class="case-head-info">
+            <span class="case-head-name">Bluff</span>
+            <span class="case-head-tag">iGaming Platform</span>
+          </div>
+          <span class="case-head-stage">Growth / Launch Support</span>
+          <div class="case-toggle">+</div>
+        </div>
+        <div class="case-body">
+          <div class="case-sections">
+            <div class="cs full">
+              <div class="cs-label">Client Overview</div>
+              <p class="lead">Bluff is a social-centric betting and entertainment platform combining sportsbook, iGaming, prediction markets, and creator-led community events.</p>
+              <p>Built by founders from Stake, Bet365, and William Hill — generating over <strong class="hl">$17B in revenue</strong> across those platforms. Designed as an on-chain Stake-killer.</p>
+              <div class="links-row">
+                <a href="https://x.com/official_bluff" class="link-btn" target="_blank">Twitter / X</a>
+                <a href="https://www.bluff.com/" class="link-btn" target="_blank">Website</a>
+                <a href="https://www.figma.com/board/98vpNN3chfbXyVDsTAnEM2/Bluff?t=Zw4GuVAxRkgTLwsO-1" class="link-btn figma" target="_blank">↗ Figma Board</a>
+              </div>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Responsibility Areas</div>
+              <ul>
+                <li>Outreach and preparation of KOL list for the campaign</li>
+                <li>Traffic acquisition through KOLs & streamers</li>
+                <li>Promo creative preparation for creators</li>
+                <li>Tracking publication timing and coordinating schedules</li>
+              </ul>
+            </div>
+            <div class="cs">
+              <div class="cs-label">Execution</div>
+              <ul>
+                <li><strong class="hl">27 KOLs and streamers</strong> activated</li>
+                <li><strong class="hl">12 live streams</strong> across platforms</li>
+                <li><strong class="hl">110 FNF groups</strong> engaged for organic amplification</li>
+                <li>Promo creatives and launch packs prepared for creators</li>
+              </ul>
+            </div>
+            <div class="cs full">
+              <div class="cs-label">Overall Results</div>
+              <div class="results-grid">
+                <div class="res"><div class="res-val">230,000+</div><div class="res-desc">Total Impressions</div></div>
+                <div class="res"><div class="res-val">20,000+</div><div class="res-desc">Community Engagements</div></div>
+                <div class="res"><div class="res-val">200+</div><div class="res-desc">New Smart FNF Followers & Whales</div></div>
+                <div class="res"><div class="res-val blue">&gt;$5M</div><div class="res-desc">Total Wallet Volume</div></div>
+                <div class="res"><div class="res-val">$26.74</div><div class="res-desc">CPM</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /cases-list -->
   </div>
 </section>
+
+<!-- CTA -->
+<section class="cta-section reveal" id="contact">
+  <h2>Ready to Build<br><span>Real Traction?</span></h2>
+  <p>We work with a select number of projects per cycle. If you're building something serious in Web3, let's talk.</p>
+  <div class="cta-btns">
+    <a href="mailto:hello@memoryengine.xyz" class="btn btn-fill">Book a Call</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Memory<span>Engine</span></div>
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#cases">Cases</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="footer-copy">© 2025 Memory Engine</div>
+</footer>
 
 <script>
-function toggleCase(header){
-  const parent = header.parentElement;
-  parent.classList.toggle("open");
-}
-
-function scrollToCases(){
-  document.getElementById("cases").scrollIntoView({behavior:"smooth"});
-}
+  function toggleCase(id) {
+    const el = document.getElementById(id);
+    const isOpen = el.classList.contains('open');
+    document.querySelectorAll('.case-item.open').forEach(c => c.classList.remove('open'));
+    if (!isOpen) {
+      el.classList.add('open');
+      setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+  }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(el => { if(el.isIntersecting){ el.target.classList.add('on'); obs.unobserve(el.target); } });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
-
 </body>
 </html>
